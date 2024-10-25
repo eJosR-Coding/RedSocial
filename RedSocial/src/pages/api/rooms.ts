@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({ success: false, error: (error as any).message });
       }
       break;
-      
+
     case 'POST':
       try {
         // Extraemos 'name' y 'description' de req.body
@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({ success: false, error: (error as any).message });
       }
       break;
-      
+
     default:
       res.status(400).json({ success: false, message: "No method for this endpoint" });
       break;
