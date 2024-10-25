@@ -20,7 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case 'POST':
             try {
                 const { title, body, userId } = req.body;
-
                 if (!title || !body || !userId) {
                     return res.status(400).json({ success: false, message: 'Title, body, and userId are required.' });
                 }

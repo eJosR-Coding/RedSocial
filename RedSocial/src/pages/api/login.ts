@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '../../../libs/dbConnect';
-import User from '../models/user'
+import User from '../models/user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,8 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(400).json({ success: false, message: 'Credenciales inválidas.' });
         }
 
-        // Respuesta exitosa (puedes agregar un token JWT o alguna forma de sesión si quieres)
-        res.status(200).json({ success: true, data: { username: user.username, email: user.email } });
+        // Respuesta exitosa (agregamos el user._id para pasarlo al frontend)
+        res.status(200).json({ success: true, data: { userId: user._id, username: user.username, email: user.email } });
       } catch (error) {
         res.status(500).json({ success: false, message: 'Error al autenticar el usuario.' });
       }
