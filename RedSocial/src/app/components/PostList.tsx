@@ -1,24 +1,46 @@
 "use client";
 
+import { Box, Typography, IconButton } from "@mui/material";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { Post } from "./PostForm";
+
 interface PostListProps {
-  posts: string[]; // Arreglo de publicaciones
+  posts: Post[];
 }
 
 export default function PostList({ posts }: PostListProps) {
   return (
-    <div className="w-full max-w-xl">
+    <Box sx={{ width: "100%", padding: "2rem" }}>
       {posts.length > 0 ? (
         posts.map((post, index) => (
-          <div
+          <Box
             key={index}
-            className="bg-foreground text-background p-4 mb-4 rounded-md shadow-md"
+            sx={{
+              backgroundColor: "#1f2937",
+              padding: "1rem",
+              borderRadius: "8px",
+              marginBottom: "1rem",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              color: "white",
+            }}
           >
-            {post}
-          </div>
+            <Typography variant="h6">{post.title}</Typography>
+            <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
+              {post.body}
+            </Typography>
+            <Typography variant="caption" sx={{ marginTop: "1rem", display: "block", color: "#9CA3AF" }}>
+              {new Date(post.createdAt).toLocaleString()}
+            </Typography>
+            <IconButton sx={{ color: "#3b82f6" }}>
+              <ThumbUpIcon />
+            </IconButton>
+          </Box>
         ))
       ) : (
-        <p className="text-foreground">Aún no has publicado nada.</p>
+        <Typography variant="body1" color="white">
+          Aún no has publicado nada.
+        </Typography>
       )}
-    </div>
+    </Box>
   );
 }
