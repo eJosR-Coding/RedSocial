@@ -1,5 +1,4 @@
-"use client"; 
-
+// PostForm.tsx
 import { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
@@ -9,22 +8,26 @@ interface PostFormProps {
 }
 
 export interface Post {
+  _id: string; // Agrega esta propiedad
   title: string;
   body: string;
   createdAt: string;
+  user: string;
 }
 
 export default function PostForm({ addPost, userId }: PostFormProps) {
-  const [postContent, setPostContent] = useState("");  // Estado para el contenido
-  const [postTitle, setPostTitle] = useState("");      // Estado para el título
+  const [title, setTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
 
   const handlePost = async () => {
-    if (!postContent || !postTitle) return; // Asegurarse de que el título y el contenido no estén vacíos
+    if (!title || !postContent) return;
 
     const newPost: Post = {
-      title: postTitle, // Título ingresado por el usuario
+      _id: Date.now().toString(), // Genera un ID temporal
+      title,
       body: postContent,
       createdAt: new Date().toISOString(),
+      user: userId,
     };
 
     try {
@@ -34,7 +37,7 @@ export default function PostForm({ addPost, userId }: PostFormProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: newPost.title,   // Incluye el título
+          title: newPost.title,
           body: newPost.body,
           userId,
         }),
@@ -42,9 +45,9 @@ export default function PostForm({ addPost, userId }: PostFormProps) {
 
       const data = await res.json();
       if (data.success) {
-        addPost(newPost);
-        setPostTitle("");      // Limpiar el campo de título
-        setPostContent("");    // Limpiar el campo de contenido
+        addPost(data.data);
+        setTitle("");
+        setPostContent("");
       } else {
         console.error("Error al publicar:", data.message);
       }
@@ -68,25 +71,20 @@ export default function PostForm({ addPost, userId }: PostFormProps) {
       <Typography variant="h6" color="white" sx={{ marginBottom: "1rem" }}>
         ¿Qué estás pensando?
       </Typography>
-
-      {/* Campo para el título del post */}
       <TextField
         fullWidth
         variant="outlined"
         placeholder="Escribe el título aquí..."
-        value={postTitle}
-        onChange={(e) => setPostTitle(e.target.value)}
-        InputLabelProps={{ style: { color: "#fff" } }}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         sx={{
+          marginBottom: "1rem",
           "& .MuiInputBase-root": { backgroundColor: "#1f2937", color: "#fff" },
           "& .MuiOutlinedInput-notchedOutline": { borderColor: "#374151" },
           "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#60a5fa" },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#3b82f6" },
-          marginBottom: "1rem",
         }}
       />
-
-      {/* Campo para el contenido del post */}
       <TextField
         fullWidth
         variant="outlined"
@@ -103,7 +101,6 @@ export default function PostForm({ addPost, userId }: PostFormProps) {
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#3b82f6" },
         }}
       />
-
       <Button
         fullWidth
         variant="contained"

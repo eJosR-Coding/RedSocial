@@ -7,28 +7,15 @@ export interface IComment extends Document {
     post: IPost['_id'];
     user: IUser['_id'];
     likes: IUser['_id'][];
+    parentComment?: IComment['_id'];
 }
 
 const commentSchema: Schema = new Schema({
-    body: {
-        type: String,
-        required: true,
-    },
-    post: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
-        required: true,
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }],
+    body: { type: String, required: true },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    parentComment: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: null },
 }, { timestamps: true });
 
-const Comment = mongoose.model<IComment>('Comment', commentSchema);
-export default Comment;
+export default mongoose.models.Comment || mongoose.model<IComment>('Comment', commentSchema);

@@ -2,22 +2,17 @@ import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import PostForm from "./PostForm";
 import PostList from "./PostList";
+import { IPost } from "../../pages/models/post"; // Importando IPost del modelo
 
 interface IUser {
   username: string;
   email: string;
 }
 
-interface Post {
-  title: string;
-  body: string;
-  createdAt: string;
-}
-
 export default function Profile() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUser | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,26 +44,18 @@ export default function Profile() {
     }
   };
 
-  const addPost = (newPost: Post) => {
-    setPosts([newPost, ...posts]); // Agrega el nuevo post al estado
+  const addPost = (newPost: IPost) => {
+    setPosts([newPost, ...posts]);
   };
 
-  if (loading) {
-    return <p>Cargando...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!userData) {
-    return <p>No se encontraron datos del usuario.</p>;
-  }
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!userData) return <p>No se encontraron datos del usuario.</p>;
 
   return (
     <Box
       sx={{
-        minHeight: "100vh", // Ocupa toda la pantalla
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -108,7 +95,7 @@ export default function Profile() {
       <PostForm addPost={addPost} userId={userId || ""} />
 
       {/* Lista de publicaciones */}
-      <PostList posts={posts} />
+      <PostList posts={posts} userId={userId || ""} />
     </Box>
   );
 }

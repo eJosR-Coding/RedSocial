@@ -1,20 +1,32 @@
-"use client";
-
+// PostList.tsx
 import { Box, Typography, IconButton } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import { Post } from "./PostForm";
+import { useState } from "react";
+import CommentList from "./CommentList";
+import CommentForm from "./CommentForm";
+import { Post, Comment } from "../types"; // Adjust the path as needed
 
 interface PostListProps {
   posts: Post[];
+  userId: string;
 }
 
-export default function PostList({ posts }: PostListProps) {
+export default function PostList({ posts, userId }: PostListProps) {
+  const [comments, setComments] = useState<{ [postId: string]: Comment[] }>({});
+
+  const addCommentToPost = (postId: string, newComment: Comment) => {
+    setComments((prevComments) => ({
+      ...prevComments,
+      [postId]: [...(prevComments[postId] || []), newComment],
+    }));
+  };
+
   return (
     <Box sx={{ width: "100%", padding: "2rem" }}>
       {posts.length > 0 ? (
-        posts.map((post, index) => (
+        posts.map((post) => (
           <Box
-            key={index}
+            key={post._id}
             sx={{
               backgroundColor: "#1f2937",
               padding: "1rem",
@@ -24,16 +36,33 @@ export default function PostList({ posts }: PostListProps) {
               color: "white",
             }}
           >
-            <Typography variant="h6">{post.title}</Typography>
-            <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {post.title}
+            </Typography>
+            <Typography variant="body1" sx={{ marginBottom: "0.5rem" }}>
               {post.body}
             </Typography>
-            <Typography variant="caption" sx={{ marginTop: "1rem", display: "block", color: "#9CA3AF" }}>
+            <Typography variant="caption" sx={{ color: "#9CA3AF" }}>
               {new Date(post.createdAt).toLocaleString()}
             </Typography>
-            <IconButton sx={{ color: "#3b82f6" }}>
+            <IconButton color="primary">
               <ThumbUpIcon />
             </IconButton>
+
+            {/* Formulario para agregar un comentario */}
+            <CommentForm
+              postId={post._id}
+              userId={userId}
+              addComment={(newComment) => addCommentToPost(post._id, newComment)}
+            />
+
+            {/* Lista de comentarios */}
+            <CommentList
+              comments={comments[post._id] || []}
+              postId={post._id}
+              userId={userId}
+              addComment={(newComment) => addCommentToPost(post._id, newComment)}
+            />
           </Box>
         ))
       ) : (
